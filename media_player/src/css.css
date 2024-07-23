@@ -14,11 +14,11 @@ audio{
 }
 .container {
     height: 420px;
-    border: 2px solid red;
-    /* overflow: hidden; */
+    /* border: 2px solid red; */
+    overflow: hidden;
 }
 .container ul{
-    border: 2px solid #fff;
+    /* border: 2px solid #fff; */
     /* 过渡数值型变量 */
     transition:0.2s;
 }
