@@ -55,11 +55,13 @@ function Play(lrc_obj){
         }
         uls[i-1].classList.add('active')
 
-        // if(i-1>8){
+        if(i>8){
             let move=-30*(i-8)
             console.log(i,move)
             lrc_container.style.transform=`translate(0,${move}px)`
-        // }
+        }else{
+            lrc_container.style.transform='translate(0,0)'
+        }
         
     })
 }
