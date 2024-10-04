@@ -1,5 +1,6 @@
 import json
 import dashscope as ds
+import time
 from http import HTTPStatus
 
 class Ali_AI:
@@ -21,13 +22,15 @@ class Ali_AI:
                 self.messages.append({"role": "assistant", "content": res})
 
             except KeyboardInterrupt:
+                self.save_messages()
                 print("\ntotal token:", self.token_count)
                 print("total cost (less than):", self.token_cost(self.token_count))
                 break
     
 
     def user_input(self):
-        msg = input("usr:")
+        msg = input("input:")
+        print("\033[32m" + msg + "\033[0m")
         self.messages.append({"role": "user", "content": msg})
     
     def single_chat(self):
@@ -60,7 +63,7 @@ class Ali_AI:
                 self.messages.append({"role": "assistant", "content": msg_content})
                 self.token_count += response.usage.total_tokens
 
-                print(f"assistant: {msg_content}")
+                print(msg_content)
             else:
                 raise Exception(response.status_code, response.body)
 
@@ -78,6 +81,9 @@ class Ali_AI:
             case "qwen-max":
                 return num/1000 * 0.06
             
+    def save_messages(self):
+        with open(f"src/messages/{time.strftime('%Y-%m-%d_%H-%M-%S')}.json", "w", encoding="utf-8") as f:
+            json.dump(self.messages, f, indent=2, ensure_ascii=False)
 
 
     def chat_test(self):
