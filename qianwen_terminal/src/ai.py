@@ -29,7 +29,7 @@ class Ali_AI:
     
 
     def user_input(self):
-        msg = input("input:")
+        msg = input("input> ")
         print("\033[32m" + msg + "\033[0m")
         self.messages.append({"role": "user", "content": msg})
     
@@ -82,19 +82,24 @@ class Ali_AI:
                 return num/1000 * 0.06
             
     def save_messages(self):
-        with open(f"src/messages/{time.strftime('%Y-%m-%d_%H-%M-%S')}.json", "w", encoding="utf-8") as f:
+        filename = self.summerize(self.messages)
+        with open(f"messages/{filename}.json", "w", encoding="utf-8") as f:
             json.dump(self.messages, f, indent=2, ensure_ascii=False)
 
 
-    def chat_test(self):
+    def summerize(self, msg:list[dict]):
         response = ds.Generation.call(
             api_key=self.apikey,
             model=self.model,
             messages=[
-                {"role": "user", "content": "你好"}
+                *msg,
+                {"role": "user", "content": "请精简总结以上对话内容, 10字以内"},
             ],
             result_format='message'
         )
-        print(json.dumps(response, indent=2))
-        print(response.output.choices[0].message.content)
+        if response.status_code == HTTPStatus.OK:
+            return response.output.choices[0].message.content
+        else:
+            print('\nsummerize error:', Exception(response.status_code, response.message))
+            return "cant_summerize"+time.strftime('%Y-%m-%d_%H-%M-%S')
     
