@@ -29,9 +29,21 @@ class Ali_AI:
     
 
     def user_input(self):
-        msg = input("input> ")
-        print("\033[32m" + msg + "\033[0m")
-        self.messages.append({"role": "user", "content": msg})
+        all_input = ""
+        flag = 0
+        while True:
+            if flag == 0:
+                msg = input("input> ")
+            else:
+                msg = input("     > ")
+
+            all_input += msg + "\n"
+            flag += 1
+            if msg == "":
+                break
+
+        print("\033[32m" + all_input + "\033[0m")
+        self.messages.append({"role": "user", "content": all_input})
     
     def single_chat(self):
         self.user_input()
@@ -56,7 +68,7 @@ class Ali_AI:
                         self.token_count += chunk.usage.total_tokens
                         break
                 else:
-                    raise Exception(chunk.status_code, chunk.body)
+                    print('error code:',chunk.status_code,"\nerror message:", chunk.message)
         else:
             if response.status_code == HTTPStatus.OK:
                 msg_content = response.output.choices[0].message.content
@@ -65,7 +77,7 @@ class Ali_AI:
 
                 print(msg_content)
             else:
-                raise Exception(response.status_code, response.body)
+                print('error code:', response.status_code,"\nerror message:", response.message)
 
         print('\n')
         return msg_content
@@ -80,8 +92,11 @@ class Ali_AI:
                 return num/1000 * 0.002
             case "qwen-max":
                 return num/1000 * 0.06
+            case "qwen-max-longcontext":
+                return num/1000 * 0.12
             
     def save_messages(self):
+        print("\nwait, saving messages...")
         filename = self.summerize(self.messages)
         with open(f"messages/{filename}.json", "w", encoding="utf-8") as f:
             json.dump(self.messages, f, indent=2, ensure_ascii=False)
