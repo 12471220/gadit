@@ -23,7 +23,7 @@ class Ali_AI:
 
             except KeyboardInterrupt:
                 self.save_messages()
-                print("\ntotal token:", self.token_count)
+                print("total token:", self.token_count)
                 print("total cost (less than):", self.token_cost(self.token_count))
                 break
     
@@ -32,15 +32,19 @@ class Ali_AI:
         all_input = ""
         flag = 0
         while True:
-            if flag == 0:
-                msg = input("input> ")
-            else:
-                msg = input("     > ")
+            try:
+                if flag == 0:
+                    msg = input(">>> ")
+                else:
+                    msg = input("... ")
 
-            all_input += msg + "\n"
-            flag += 1
-            if msg == "":
-                break
+                if msg == "" or msg[-1] != "\\":
+                    all_input += msg
+                    break
+                all_input += msg[:-1] + "\n"
+                flag = 1
+            except KeyboardInterrupt:
+                raise KeyboardInterrupt
 
         print("\033[32m" + all_input + "\033[0m")
         self.messages.append({"role": "user", "content": all_input})
